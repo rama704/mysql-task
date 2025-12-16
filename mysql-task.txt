@@ -1,0 +1,152 @@
+ال primary key هو عبارة عن مفتاح الأساسي وهو العامود اللذي يميز كل كل صف في الجدول.
+واله خصائص :
+1) unique
+2)not duplicated
+3)not null
+ال unique constraint هو عبارة عن قيد انا بحطه ع جدول معين حتى القيم ما تتكرر وتكون متشابهة مثلا انا عندي عامود الايميلات وما بدي يكون عندي ايميلات متكررة ف بحط عليه هاد القيد .
+واله خصائص :
+1) unique
+2) allowed null 
+3) ممكن يكون عندي بالجدول اكتر من unique
+----------------------------------------------
+### **Task & Exercise (2)**
+
+**Task 1**: 
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE Orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_date DATE NOT NULL,
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+CREATE TABLE Products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE Order_Product (
+    order_id INT,
+    product_id INT,
+    quantity INT DEFAULT 1,
+    PRIMARY KEY (order_id, product_id),
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+);
+--------------------------------
+task(2):
+Partial Dependency (الاعتماد الجزئي):
+لما يكون عندك مفتاح أساسي مركب، وعمود يعتمد على جزء منه بس، مش كله.
+
+Transitive Dependency (الاعتماد الانتقالي):
+لما يكون عمود غير المفتاح يعتمد على عمود غير المفتاح الآخر بدل ما يعتمد مباشرة على المفتاح.
+---------------------------------
+task(3):
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    birth_date DATE
+);
+INSERT INTO students (name, email, birth_date) VALUES
+('Rama Mohammad', 'rama@gmail.com', '2002-03-03'),
+('Hamada Aldaraghmeh', 'hamada@gmail.com', '2006-03-31'),
+('Sara Mohammad', 'sara@gmail.com', '2010-10-28');
+
+SELECT *
+FROM students
+WHERE birth_date > '2006-03-31'
+ORDER BY name;
+
+UPDATE students
+SET email = 'rama_33@gmail.com'
+WHERE id = 1;
+
+DELETE FROM students
+WHERE id = 3;
+---------------------------------------
+task(4):
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(50)
+);
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    amount DECIMAL(8,2),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+CREATE TABLE newsletter_subscribers (
+    email VARCHAR(50)
+);
+INSERT INTO users (name, city) VALUES
+('rama', 'Amman'),
+('Sara', 'Amman'),
+('hamada', 'Amman'),
+('qossai', 'Amman'),
+('abood', 'Amman'),
+('doha', 'Amman'),
+('marry' , 'Amman'),
+('shahla', 'salt'),
+('Huda', 'Zarqa');
+
+INSERT INTO orders (user_id, amount) VALUES
+(1, 200),
+(1, 300),
+(2, 450),
+(3, 500),
+(4, 50),
+(5, 600);
+INSERT INTO newsletter_subscribers VALUES
+('rama@gmail.com'),
+('sara@gmail.com');
+
+SELECT city, COUNT(*) AS user_count
+FROM users
+
+GROUP BY city
+HAVING COUNT(*) > 6;
+
+SELECT u.*
+FROM users u
+LEFT JOIN orders o ON u.user_id = o.user_id
+WHERE o.order_id IS NULL;
+
+SELECT user_id, AVG(amount) AS avg_order_amount
+FROM orders
+GROUP BY user_id;
+
+SELECT u.name, SUM(o.amount) AS total_spent
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.user_id
+HAVING SUM(o.amount) > (
+    SELECT AVG(amount) FROM orders
+);
+SELECT name AS contact
+FROM users
+UNION
+SELECT email
+FROM newsletter_subscribers; 
+----------------------------------------
+task(5):
+Data: These are facts or values ​​without clear meaning.
+For example: 86 Rama, Amman
+(This data is not processed.)
+
+Information: When we process and organize data, it becomes understandable. For example: Rama's average is 86.
+database:It is an organized place where we store data in an orderly manner and create relationships between this data.
+DBMS:It is a program or system that manages and controls this data and performs operations on it such as creating, deleting, modifying, and establishing relationships, such as MySQL, Oracle, and SQL Server.
+RDBMS:It is a type of database management system (DBMS) that stores data in tables, and each table is linked to the other through relationships (such as keys).
+-----------------------------------------
+task(7):
+The clothing store has a database for all its products: name, size, color, price, and quantity.
+When they sell an item, the system updates the quantity and stores the sale date.
+The database also helps them identify their best-selling products and quickly place new orders.
